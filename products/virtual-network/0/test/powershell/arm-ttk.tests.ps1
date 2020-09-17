@@ -3,8 +3,11 @@ Invoke-WebRequest https://azurequickstartsservice.blob.core.windows.net/ttk/lat
 Expand-Archive -LiteralPath "$Env:HOME/arm-template-toolkit.zip" -DestinationPath "$Env:HOME/arm-template-toolkit" 
 Import-Module "$Env:HOME/arm-template-toolkit/arm-ttk/arm-ttk.psd1"
 Get-Module
+$ScriptDir = Split-Path $script:MyInvocation.MyCommand.Path -Parent
+ 
+Write-Host "Current script directory is $ScriptDir"
 #Run Tests
-$testresult = Test-AzTemplate -ErrorAction Continue
+$testresult = Test-AzTemplate -ErrorAction Continue -TemplatePath $ScriptDir
 $testedFiles = $testresult.file.FullPath | Sort-Object -Unique
 $testedFiles | ForEach-Object {
     $thisfile = $_
