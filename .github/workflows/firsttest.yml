@@ -54,3 +54,4 @@ jobs:
           echo ${{ steps.deploy.outputs.VirtualNetworksResourceGroup }}
           echo ${{ steps.deploy.outputs.VirtualNetworksName }}
           echo ${{ steps.deploy.outputs.SubnetID }}
+          env
