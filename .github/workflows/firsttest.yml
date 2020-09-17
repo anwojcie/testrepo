@@ -36,7 +36,7 @@ jobs:
         uses: azure/login@v1.1
         with:
           creds: ${{secrets.AZURE_CREDENTIALS_AIRS}}
-          enable-AzPSSession: true 
+          #enable-AzPSSession: true 
           
       - name: Deploy Azure Resource Manager (ARM) Template
         uses: Azure/arm-deploy@v1.0.1
