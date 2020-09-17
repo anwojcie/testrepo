@@ -49,4 +49,8 @@ jobs:
           parameters: products/virtual-network/0/demos/azuredeploy.parameters.json
           deploymentMode: Incremental
 
-      - run: echo ${{ steps.deploy.outputs }}
+      - run: |
+          echo ${{ steps.deploy.outputs.VirtualNetworksResourceId }}
+          echo ${{ steps.deploy.outputs.VirtualNetworksResourceGroup }}
+          echo ${{ steps.deploy.outputs.VirtualNetworksName }}
+          echo ${{ steps.deploy.outputs.SubnetID }}
