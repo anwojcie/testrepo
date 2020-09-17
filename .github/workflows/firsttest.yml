@@ -39,6 +39,7 @@ jobs:
           #enable-AzPSSession: true 
           
       - name: Deploy Azure Resource Manager (ARM) Template
+        id: deploy
         uses: Azure/arm-deploy@v1.0.1
         with:
           scope: resourcegroup
@@ -47,4 +48,5 @@ jobs:
           template: products/virtual-network/0/armtemplates/azuredeploy.json
           parameters: products/virtual-network/0/demos/azuredeploy.parameters.json
           deploymentMode: Incremental
-        
+
+      - run: echo ${{ steps.deploy.outputs }}
