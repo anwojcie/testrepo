@@ -3,7 +3,8 @@ Invoke-WebRequest https://azurequickstartsservice.blob.core.windows.net/ttk/lat
 Expand-Archive -LiteralPath "$Env:HOME/arm-template-toolkit.zip" -DestinationPath "$Env:HOME/arm-template-toolkit" 
 Import-Module "$Env:HOME/arm-template-toolkit/arm-ttk/arm-ttk.psd1"
 Get-Module
-$ScriptDir = Split-Path $script:MyInvocation.MyCommand.Path -Parent
+$ScriptDir = 'products\virtual-network\0'
+#Split-Path $script:MyInvocation.MyCommand.Path -Parent
  
 Write-Host "Current script directory is $ScriptDir"
 #Run Tests
