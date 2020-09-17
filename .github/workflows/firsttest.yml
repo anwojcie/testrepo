@@ -46,5 +46,5 @@ jobs:
           subscriptionId: 2902300e-7ff9-4c89-8c6a-550ee5cca63d
           template: products/virtual-network/0/armtemplates/azuredeploy.json
           parameters: products/virtual-network/0/demos/azuredeploy.parameters.json
-          deploymentMode: Validate
+          deploymentMode: Incremental
         
