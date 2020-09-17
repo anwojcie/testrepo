@@ -31,3 +31,14 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+      
+      - name: Login via Az module
+        uses: azure/login@v1.1
+        with:
+          creds: ${{AZURE_CREDENTIALS_AIRS}}
+          enable-AzPSSession: true 
+          
+      # - name: Deploy Azure Resource Manager (ARM) Template
+      #   uses: Azure/arm-deploy@v1.0.1
+      #   with:
+      #     subscriptionId: 
