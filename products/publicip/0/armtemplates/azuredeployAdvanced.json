@@ -1,0 +1,154 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string",
+             "metadata": {
+               "discription": "The name of the public IP address."
+             }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+               "discription": "Resource location."
+             }
+        },
+        "sku": {
+            "type": "string",
+            "allowedValues": [
+                "Basic",
+                "Standard"
+            ],
+            "metadata": {
+               "discription": "The public IP address SKU."
+             }
+        },
+        "publicIPAllocationMethod": {
+            "type": "string",
+            "allowedValues": [
+                "Dynamic",
+                "Static"
+            ],
+            "defaultValue": "Dynamic",
+            "metadata": {
+               "discription": "The public IP address allocation method. - Static or Dynamic"
+             }
+        },
+        "idleTimeoutInMinutes": {
+            "type": "int",
+            "metadata": {
+               "discription": "The idle timeout of the public IP address."
+             }
+        },
+        "publicIpAddressVersion": {
+            "type": "string",
+            "defaultValue": "IPv4",
+            "allowedValues": ["IPv4", "IPv6"],
+            "metadata": {
+               "discription": "The public IP address version. - IPv4 or IPv6"
+             }
+        },
+        "domainNameLabel": {
+          "type": "string",
+          "metadata": {
+            "description": "The domain name label. https://docs.microsoft.com/en-us/azure/templates/microsoft.network/publicipaddresses#PublicIPAddressDnsSettings"
+          }
+        },
+        "fqdn": {
+          "type": "string",
+          "metadata": {
+            "description": "The Fully Qualified Domain Name of the A DNS record associated with the public IP."
+          }
+        },
+        "reverseFqdn": {
+          "type": "string",
+          "metadata": {
+            "description": "The reverse FQDN."
+          }
+        },
+        "ddosCustomPolicyID": {
+          "type": "string",
+          "metadata": {
+            "description": "The DDoS custom policy associated with the public IP."
+          }
+        },
+        "ipAddress": {
+          "type": "string",
+          "metadata": {
+            "description": "The IP address associated with the public IP address resource."
+          }
+        },
+        "publicIPPrefixID": {
+          "type": "string",
+          "metadata": {
+            "description": "The Public IP Prefix this Public IP Address should be allocated from."
+          }
+        },
+        "zoneList": {
+          "type": "Array",
+          "metadata": {
+            "description": "A list of availability zones denoting the IP allocated for the resource needs to come from."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "metadata": {
+            "description": "Tags of the Azure resource. Visolit Security Framework Control F5 requires it."
+          }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-05-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+                "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]",
+                "publicIpAddressVersion": "[parameters('publicIpAddressVersion')]",
+                "dnsSettings": {
+                  "domainNameLabel": "[parameters('domainNameLabel')]",
+                  "fqdn": "[parameters('fqdn')]",
+                  "reverseFqdn": "[parameters('reverseFqdn')]"
+                },
+                "ddosSettings": {
+                  "ddosCustomPolicy": {
+                    "id": "[parameters('ddosCustomPolicyID')]"
+                  }
+                },
+                "ipTags": [
+                  "[parameters('tags')]"
+                ],
+                "ipAddress": "[parameters('ipAddress')]",
+                "publicIPPrefix": {
+                  "id": "[parameters('publicIPPrefixID')]"
+                }
+            },
+            "zones": "[parameters('zoneList')]",
+            "tags": "[parameters('tags')]"
+        }
+    ],
+    "outputs": {
+      "name": {
+        "type": "String",
+        "value": "[parameters('name')]"
+      },
+      "publicIpAddressVersion": {
+        "type": "string",
+        "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('name'))).publicIpAddressVersion]"
+      },
+      "provisioningState": {
+        "type": "string",
+        "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('name'))).provisioningState]"
+      },
+      "tags": {
+        "type": "object",
+        "value": "[parameters('tags')]"
+      }
+    }
+}

@@ -1,0 +1,123 @@
+name: $(Build.RequestedFor) $(Build.SourceBranchName) $(productName) $(productVersion)
+
+trigger:
+  batch: true
+  paths:
+    include:
+    - products/keyvault/0/*
+    exclude:
+    - '*/readme.md'
+    - '*.png'
+
+variables:
+- template: build.variables.yaml
+- template: /general/pipelines/build.AzSubscription.variables.yaml
+- template: /general/pipelines/publish.UniversalFeed.variables.yaml
+
+stages:
+- stage: Validation
+  jobs:
+    - job:
+      displayName: armttk tests ${{ variables.productName }}
+      steps:
+      - task: PowerShell@2
+        displayName: 'Run deploymentTemplate tests from ARM Template Tester Toolkit'
+        inputs:
+          targetType: 'inline'
+          script: |
+            Install-Module pester -MinimumVersion 5.0 -Force               
+            Import-Module -Name Pester -MinimumVersion 5.0               
+            Invoke-Pester -Path ./test/powershell/arm-ttk.tests.ps1 -OutputFile "$(Common.TestResultsDirectory)\TEST-armttk-${{ variables.productName }}.xml" -OutputFormat NUnitXml -passthru –EnableExit
+          pwsh: true
+          workingDirectory: '${{ variables.productPath }}'
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFormat: 'NUnit' # Options: JUnit, NUnit, VSTest, xUnit, cTest
+          searchFolder: '$(Common.TestResultsDirectory)' # Optional
+          failTaskOnFailedTests: true
+        condition: always()
+
+    - job:
+      displayName: Validate Deployment ${{ variables.productName }} V ${{ variables.productVersion }}
+      steps:
+        - task: AzureResourceManagerTemplateDeployment@3
+          inputs:
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+            subscriptionId: ${{variables.subscriptionId}}
+            action: 'Create Or Update Resource Group'
+            resourceGroupName: ${{variables.resourceGroupName}}
+            location: 'West Europe'
+            templateLocation: 'Linked artifact'
+            csmFile: ${{ variables.productPath }}/armtemplates/azuredeploy.json
+            csmParametersFile: ${{ variables.productPath }}/demos/azuredeploy.parameters.json
+            #overrideParameters: '-name anwojcietestparam'
+            deploymentMode: 'Validation'
+
+- stage: 
+  displayName: Deploy and Test
+  jobs: 
+    - job: DeployTest
+      displayName: Deploy and Test ${{ variables.productName }} V ${{ variables.productVersion }}
+      steps:
+        - task: AzureResourceManagerTemplateDeployment@3
+          displayName: Deploy ${{ variables.productName }}
+          inputs:
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+            subscriptionId: ${{variables.subscriptionId}}
+            action: 'Create Or Update Resource Group'
+            resourceGroupName: ${{variables.resourceGroupName}}
+            location: 'West Europe'
+            templateLocation: 'Linked artifact'
+            csmFile: ${{ variables.productPath }}/armtemplates/azuredeploy.json
+            csmParametersFile: ${{ variables.productPath }}/demos/azuredeploy.parameters.json
+            #overrideParameters: '-KVname anwojcietestparam'
+            deploymentOutputs: 'keyvaultoutput'
+            deploymentMode: Incremental
+        # - task: AzurePowerShell@5
+        #   displayName: Test ${{ variables.productName }} TC_SecretRetrieval.ps1
+        #   inputs:
+        #     azureSubscription: ${{variables.azureResourceManagerConnection}}
+        #     ScriptType: FilePath
+        #     ScriptPath: ${{ variables.productPath }}/test/powershell/TC_SecretRetrieval.ps1  
+        #     FailOnStandardError: true
+        #     azurePowerShellVersion: 'LatestVersion'
+    - job:
+      displayName: Destroy ${{ variables.productName }}
+      dependsOn: DeployTest
+      steps:
+        - task: AzureResourceManagerTemplateDeployment@3
+          displayName: Destroy ${{ variables.productName }}
+          inputs:
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+            subscriptionId: ${{variables.subscriptionId}}
+            action: DeleteRG
+            resourceGroupName: ${{variables.resourceGroupName}}
+            
+- stage: Publish
+  jobs: 
+    - job: PublishPiplineArtifact
+      # This one is mainly so Devs can see what is going to be published later on
+      steps:
+        - task: PublishPipelineArtifact@1
+          displayName: Publish PipelineArtifact ${{ variables.productName }}
+          inputs:
+            targetPath: ${{ variables.productPath }}/
+            artifactName: ${{ lower(variables.productName) }} #artifactname = Package in the artifact feed -> has to be lowercase, only lowercase here to look the same as in the artifact feed
+        - task: UniversalPackages@0
+          displayName: Publish Artifact ${{ variables.productName }} to feed ${{variables.vstsFeed}}
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest')) #will only publish on commits to master, meaning this is a realease
+          #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest')) #will only publish on commits to master, meaning this is a realease
+          inputs:
+            command: publish
+            publishDirectory: ${{ variables.productPath }}/
+            feedsToUsePublish: 'internal'
+            vstsFeedPublish: ${{variables.vstsFeed}}
+            vstsFeedPackagePublish: ${{ lower(variables.productName) }}
+            packagePublishDescription: ''
+            versionOption: 'minor'
+            versionPublish: ${{ variables.productVersion }} 
+
+

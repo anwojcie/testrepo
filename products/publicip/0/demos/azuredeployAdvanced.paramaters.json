@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "location": {
+          "value": "westeurope"
+      },
+      "sku": {
+          "value": "Basic"
+      },
+      "name": {
+          "value": "visolitdevtest"
+      },
+      "publicIPAllocationMethod": {
+          "value": "Dynamic"
+      },
+      "idleTimeoutInMinutes": {
+          "value": 4
+      },
+      "publicIpAddressVersion": {
+          "value": "IPv4"
+      },
+      "ipAddress": {
+          "value": "123.123.123.123"
+      },
+      "domainNameLabel": {
+          "value": "example.com"
+      },
+      "fqdn": {
+          "value": "example.com"
+      },
+      "reverseFqdn": {
+          "value": "example.com"
+      },
+      "ddosCustomPolicyID": {
+          "value": "/subscriptions/<subscriptionID>/resourceGroups/<ResourceGroup>/providers/Microsoft.Network/ddosProtectionPlans/<ddosProPlanID>"
+      },
+      "publicIPPrefixID": {
+          "value": "/subscriptions/<subscriptionID>/resourcegroups/<ResourceGroup>/providers/microsoft.network/publicipprefixes/<ipPrefixID>"
+      },
+      "zoneList": {
+          "value": [
+              "westeurope",
+              "easteurope"
+          ]
+      },
+      "tags": {
+        "value": {
+            "owner": "first.lastname@visolit.se",
+            "businessImpactAccessCode": "1",
+            "environment": "Development"
+        }
+      }
+  }
+}

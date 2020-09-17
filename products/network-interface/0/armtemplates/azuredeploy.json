@@ -1,0 +1,109 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "networkInterfaceName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "privateIPAllocationMethod": {
+            "type": "string",
+            "allowedValues": [
+                "Dynamic",
+                "Static"
+            ],
+            "defaultValue": "Dynamic"
+        },
+        "tags": {
+            "type": "object",
+            "metadata": {
+                "description": "Tags of the ARM disk resource."
+            },
+            "defaultValue": {}
+        },
+        "owner": {
+            "type": "string",
+            "metadata": {
+                "description": "Owner tag of the resource"
+            }
+        },
+        "businessImpactAccessCode": {
+            "type": "string",
+            "metadata": {
+                "description": "BusinessImpactAccessCode tag of the resource"
+            }
+        },
+        "environment": {
+            "type": "string",
+            "metadata": {
+                "description": "Environment tag of the resource"
+            }
+        },
+        "subnetId": {
+            "type": "string",
+            "metadata": {
+                "description": "ID of the subnet this network interface should bind to"
+            },
+            "defaultValue": "default"
+        },
+        "publicIPAddressId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "networkSecurityGroupsId": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        "requiredTags": {
+            "owner": "[parameters('owner')]",
+            "businessImpactAccessCode": "[parameters('businessImpactAccessCode')]",
+            "environment": "[parameters('environment')]"
+        },
+        "publicIPAddressObj": {
+            "id": "[if(not(empty(parameters('publicIPAddressId'))),parameters('publicIPAddressId'),json('null')) ]"
+        },
+        "networkSecurityGroupObj": {
+            "id": "[if(not(empty(parameters('networkSecurityGroupsId'))),parameters('networkSecurityGroupsId'),json('null')) ]"
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('networkInterfaceName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIpAddressVersion": "IPv4",
+                            "privateIPAllocationMethod": "[parameters('privateIPAllocationMethod')]",
+                            "subnet": {
+                                "id": "[parameters('subnetId')]"
+                            },
+                            "publicIPAddress": "[if(not(empty(parameters('publicIPAddressId'))),variables('publicIPAddressObj'),json('null')) ]"
+                        }
+                    }
+                ],
+                "networkSecurityGroup": "[if(not(empty(parameters('networkSecurityGroupsId'))),variables('networkSecurityGroupObj'),json('null')) ]"
+            },
+            "tags": "[union(variables('requiredTags'),parameters('tags'))]"
+        }
+    ],
+    "outputs": {
+        "subnetResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
+        },
+        "NICResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/networkInterfaces',parameters('networkInterfaceName'))]"
+        }
+    }
+}

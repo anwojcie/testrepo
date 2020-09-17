@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "diskName": {
+            "value": "vmname-disk01"
+        },
+        "sku": {
+            "value": "StandardSSD_LRS"
+        },
+        "diskSizeGB": {
+            "value": 4
+        },
+        "maxShares": {
+            "value": 1
+        },
+        "tags": {
+            "value": {
+                "owner": "first.lastname@visolit.se",
+                "businessImpactAccessCode": "1",
+                "environment": "Development"
+            }
+        }
+    }
+}

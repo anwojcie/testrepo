@@ -38,7 +38,13 @@ jobs:
           creds: ${{secrets.AZURE_CREDENTIALS_AIRS}}
           enable-AzPSSession: true 
           
-      # - name: Deploy Azure Resource Manager (ARM) Template
-      #   uses: Azure/arm-deploy@v1.0.1
-      #   with:
-      #     subscriptionId: 
+      - name: Deploy Azure Resource Manager (ARM) Template
+        uses: Azure/arm-deploy@v1.0.1
+        with:
+          scope: resourcegroup
+          resourceGroupName: anwojcieplayground
+          subscriptionId: 2902300e-7ff9-4c89-8c6a-550ee5cca63d
+          template: products/virtual-network/0/armtemplates/azuredeploy.json
+          parameters: products/virtual-network/0/demos/azuredeploy.parameters.json
+          deploymentMode: Validate
+        

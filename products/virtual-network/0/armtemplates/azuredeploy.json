@@ -1,0 +1,67 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "0.0.0.1",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "name": {
+            "type": "string"
+        },
+        "addressPrefix": {
+            "type": "string"
+        },
+        "ddosProtectionPlanEnabled": {
+            "type": "bool",
+            "defaultvalue": false
+        },
+        "resourceTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Tags of the Azure resource."
+            }
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('name')]",
+            "type": "Microsoft.Network/VirtualNetworks",
+            "apiVersion": "2020-05-01",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('resourceTags')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [ "[parameters('addressPrefix')]" ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "[parameters('addressPrefix')]"
+                        }
+                    }
+                ],
+                "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
+            }
+        }
+    ],
+    "outputs": {
+        "VirtualNetworksResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/VirtualNetworks', parameters('name'))]"
+        },
+        "VirtualNetworksResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
+        },
+        "VirtualNetworksName": {
+            "type": "string",
+            "value": "[parameters('name')]"
+        },
+        "SubnetID": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/VirtualNetworks/subnets', parameters('name'),'default')]"
+        }
+    }
+}

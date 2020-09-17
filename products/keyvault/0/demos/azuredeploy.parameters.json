@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "0.0.0.2",
+    "parameters": {
+        "KeyVaultName": {
+            "value": "aAnotherUniqueKVName"
+        },
+        "location": {
+            "value": "westeurope"
+        },
+        "sku": {
+            "value": "Standard"
+        },
+        "accessPolicies": {
+            "value": []
+        },
+        "enabledForDeployment": {
+            "value": false
+        },
+        "enabledForTemplateDeployment": {
+            "value": false
+        },
+        "enabledForDiskEncryption": {
+            "value": false
+        },
+        "enableRbacAuthorization": {
+            "value": false
+        },
+        "enableSoftDelete": {
+            "value": false
+        },
+        "softDeleteRetentionInDays": {
+            "value": 90
+        },
+        "networkAcls": {
+            "value": {}
+        },
+        "resourceTags": {
+            "value": {}
+        },
+        "secretName": {
+            "value": "testsecret" 
+        },
+        "secretValue": {
+            "value": "testsecretvalue!!!kjhkjh!KJHKJHKJH" 
+        }
+    }
+}

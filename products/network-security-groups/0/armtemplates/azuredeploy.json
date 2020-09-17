@@ -1,0 +1,93 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "String",
+            "metadata": {
+                "description": "The name of the network security group"
+            }
+        },
+        "location": {
+           "type": "string",
+           "defaultValue": "[resourceGroup().location]",
+           "metadata": {
+               "description": "The supported Azure location where the Network Security Group should be created"
+           }
+        },
+        "tags": {
+           "type": "object",
+           "metadata": {
+               "description": "Tags for the Network Security Group resource"
+           },
+           "defaultValue":{}
+        },
+        "owner": {
+            "type": "string",
+            "metadata":{
+                "description": "Sets the owner tag"
+            }
+        },
+        "businessImpactAccessCode": {
+            "type": "string",
+            "metadata": {
+                "description": "Sets the businessImpactAccessCode as tag"
+            }
+        },
+        "environment": {
+            "type": "string",
+            "metadata": {
+                "description": "Sets the environment as tag"
+            }
+        }
+    },
+    "variables": {
+        "requiredtags": {
+            "owner": "[parameters('owner')]",
+            "businessImpactAccessCode": "[parameters('businessImpactAccessCode')]",
+            "environment": "[parameters('environment')]"
+
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "tags": "[union(variables('requiredtags'),parameters('tags'))]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "Allow_Inbound_Port_3389",
+                        "properties": {
+                            "description": "Allows RDP traffic from internet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "networkSecurityGroupsResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('name'))]"
+        },
+        "networkSecurityGroupsResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
+        },
+        "networkSecurityGroupsName": {
+            "type": "string",
+            "value": "[parameters('name')]"
+        }
+    }
+}

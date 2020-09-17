@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "networkInterfaceName": {
+            "value": "nic-vmdemo001"
+        },
+        "privateIPAllocationMethod": {
+            "value": "Dynamic"
+        },
+        "owner": {
+            "value": "first.lastname@visolit.se"
+        },
+        "businessImpactAccessCode": {
+            "value": "1"
+        },
+        "environment": {
+            "value": "Development"
+        }
+    }
+}

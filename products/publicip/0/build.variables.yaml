@@ -1,0 +1,9 @@
+variables:
+- name: productName
+  value: publicip
+- name: productVersion
+  value: 0
+- name: productPath
+  value: products/${{ variables.productName }}/${{ variables.productVersion }}
+- name: subscriptionId
+  value: 29938f9a-cc9e-45f7-a129-b1f90eb93697

@@ -1,0 +1,7 @@
+variables:
+- name: productName
+  value: virtual-network
+- name: productVersion
+  value: 0
+- name: productPath
+  value: products/${{ variables.productName }}/${{ variables.productVersion }}

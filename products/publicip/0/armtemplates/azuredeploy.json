@@ -1,0 +1,110 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string",
+             "metadata": {
+               "discription": "The name of the public IP address."
+             }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+               "discription": "Resource location."
+             }
+        },
+        "sku": {
+            "type": "string",
+            "allowedValues": [
+                "Basic",
+                "Standard"
+            ],
+            "defaultValue": "Basic",
+            "metadata": {
+               "discription": "The public IP address SKU."
+             }
+        },
+        "publicIPAllocationMethod": {
+            "type": "string",
+            "allowedValues": [
+                "Dynamic",
+                "Static"
+            ],
+            "defaultValue": "Dynamic",
+            "metadata": {
+               "discription": "The public IP address allocation method. - Static or Dynamic"
+             }
+        },
+        "publicIpAddressVersion": {
+            "type": "string",
+            "defaultValue": "IPv4",
+            "allowedValues": ["IPv4", "IPv6"],
+            "metadata": {
+               "discription": "The public IP address version. - IPv4 or IPv6"
+             }
+        },
+        "domainNameLabel": {
+          "type": "string",
+          "metadata": {
+            "description": "The domain name label. https://docs.microsoft.com/en-us/azure/templates/microsoft.network/publicipaddresses#PublicIPAddressDnsSettings"
+          }
+        },
+        "idleTimeoutInMinutes": {
+          "type": "int",
+          "defaultValue": 4,
+          "metadata": {
+            "description": "The idle timeout of the public IP address."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "metadata": {
+            "description": "Tags of the Azure resource. Visolit Security Framework Control F5 requires it."
+          }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-05-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+                "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]",
+                "publicIpAddressVersion": "[parameters('publicIpAddressVersion')]",
+                "dnsSettings": {
+                  "domainNameLabel": "[parameters('domainNameLabel')]"
+                }
+            },
+            "tags": "[parameters('tags')]"
+        }
+    ],
+    "outputs": {
+      "publicIPAddressesName": {
+        "type": "String",
+        "value": "[parameters('name')]"
+      },
+      "publicIPAddressesResourceId": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('name'))]"
+      },
+      "publicIpAddressesipAddress": {
+        "type": "object",
+        "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('name')))]"
+      },
+      "publicIpAddressVersion": {
+        "type": "string",
+        "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('name'))).publicIpAddressVersion]"
+      },
+      "provisioningState": {
+        "type": "string",
+        "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('name'))).provisioningState]"
+      }
+    }
+}
