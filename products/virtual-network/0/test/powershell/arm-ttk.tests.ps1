@@ -1,7 +1,7 @@
 #Download, Extract and Import ARM-TTK
-Invoke-WebRequest https://azurequickstartsservice.blob.core.windows.net/ttk/latest/arm-template-toolkit.zip -OutFile "$Env:AGENT_TEMPDIRECTORY/arm-template-toolkit.zip" 
-Expand-Archive -LiteralPath "$Env:AGENT_TEMPDIRECTORY/arm-template-toolkit.zip" -DestinationPath "$Env:AGENT_TEMPDIRECTORY/arm-template-toolkit" 
-Import-Module "$Env:AGENT_TEMPDIRECTORY/arm-template-toolkit/arm-ttk/arm-ttk.psd1"
+Invoke-WebRequest https://azurequickstartsservice.blob.core.windows.net/ttk/latest/arm-template-toolkit.zip -OutFile "$Env:HOME/arm-template-toolkit.zip" 
+Expand-Archive -LiteralPath "$Env:HOME/arm-template-toolkit.zip" -DestinationPath "$Env:HOME/arm-template-toolkit" 
+Import-Module "$Env:HOME/arm-template-toolkit/arm-ttk/arm-ttk.psd1"
 Get-Module
 #Run Tests
 $testresult = Test-AzTemplate -ErrorAction Continue
