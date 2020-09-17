@@ -31,7 +31,13 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-      
+
+      - name: pester-tests-report
+        uses: zyborg/pester-tests-report@v1.3.2
+        with: 
+          include_paths: products/virtual-network/0
+          
+        
       - name: Login via Az module
         uses: azure/login@v1.1
         with:
